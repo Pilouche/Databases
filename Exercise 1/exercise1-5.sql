@@ -1,0 +1,37 @@
+-- a
+-- SELECT employee.*
+-- from works 
+-- WHERE company.company-name="First Bank Corporation"
+--     AND works.salary>10000;
+-------------------------------------------
+-- b
+-- SELECT employee.employee-name 
+-- FROM works
+-- WHERE employee.city = company.city;
+-------------------------------------------
+-- c
+-- SELECT a.employee-name
+-- FROM  employee a, employee b, manages m,
+-- WHERE a.employee-name = m.employee-name
+--  AND b.employee-name = m.manager-name
+--  AND a.city = b.city AND a.street = b.street ;
+-------------------------------------------
+-- d
+-- SELECT employee.employee-name
+-- FROM works
+-- WHERE salary > all( select salary FROM works where company.company-name = "Small Bank Corporation");
+-------------------------------------------
+-- e
+-- SELECT company-name
+-- FROM works
+-- GROUP BY(company-name)
+-- HAVING sum(salary) <= all( SELECT sum(salary) FROM works GROUP BY company-name) ;
+-------------------------------------------
+-- f
+-- UPDATE employee
+-- SET email = NULL ;
+-------------------------------------------
+-- g
+SELECT *
+FROM  manages m1, managers m2
+WHERE m1.employee-name = m2.manager-name ;
