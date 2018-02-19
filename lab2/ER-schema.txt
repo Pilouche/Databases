@@ -1,0 +1,19 @@
+ENTITY Program : _name abbreviation
+WEAK ENTITY Branch Program Composes : _name 
+ENTITY Department : _name abbreviation
+RELATIONSHIP Hosts Department -- Program
+ENTITY Student : _ssn name login 
+RELATIONSHIP IsIn Student -) Program
+RELATIONSHIP BelongsTo Student -> Branch
+ENTITY Course : _code name credits
+RELATIONSHIP GivenBy Course -) Department
+RELATIONSHIP Prerequisite Course -- Course
+ENTITY Classification : _name
+RELATIONSHIP Classified Course -- Classification
+RELATIONSHIP MandatoryProgram Course -- Program
+RELATIONSHIP MandatoryProgram Course -- Branch
+RELATIONSHIP RecommendedBranch Course -- Branch
+RELATIONSHIP Registered Student -- Course
+RELATIONSHIP Taken Student -- Course : grade
+RELATIONSHIP WaitingList Student -- Course : position
+ISA LimitedCourse Course : seats

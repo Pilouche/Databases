@@ -1,0 +1,27 @@
+1. Course:
+code courseName credits classificationName seats
+Keys:
+code
+
+2. Program:
+programName programAbbreviation
+Keys:
+programName
+
+3. Department:
+departmentAbbreviation departmentName
+Keys:
+departmentName
+departmentAbbreviation
+
+4. Student:
+ssn departmentAbbreviation programName branchName login studentName
+Keys:
+ssn
+
+5. StudentInCourse:
+ssn code grade position
+Keys:
+ssn code
+reference : ssn -> Student.ssn
+reference : code -> Course.code

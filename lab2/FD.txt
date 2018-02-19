@@ -1,0 +1,13 @@
+departmentName departmentAbbreviation programName programAbbreviation branchName ssn login studentName courseName code credits classificationName grade position seats
+departmentName -> departmentAbbreviation
+departmentAbbreviation -> departmentName
+programName -> programAbbreviation
+ssn -> login studentName
+ssn -> branchName
+ssn -> programName
+ssn -> departmentName
+code -> courseName credits
+code -> classificationName
+code -> seats
+ssn code -> grade
+ssn code -> position
