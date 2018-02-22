@@ -1,27 +1,16 @@
-1. Course:
-code courseName credits classificationName seats
-Keys:
-code
+Course( _code, courseName, credits, classificationName, seats )
 
-2. Program:
-programName programAbbreviation
-Keys:
-programName
+Program( _programName, programAbbreviation )
 
-3. Department:
-departmentAbbreviation departmentName
-Keys:
-departmentName
-departmentAbbreviation
+Department( _departmentName, departmentAbbreviation)
+	unique(departmentAbbreviation)
 
-4. Student:
-ssn departmentAbbreviation programName branchName login studentName
-Keys:
-ssn
+Student( _ssn, studentName, login, branchName, programName,departmentName )
+	programName -> Program.programName
+	departmentName -> Department.departmentName
+	unique(login)
 
-5. StudentInCourse:
-ssn code grade position
-Keys:
-ssn code
-reference : ssn -> Student.ssn
-reference : code -> Course.code
+StudentInCourse(_ssn, _code, grade, position )
+	ssn -> Student.ssn
+	code -> Course.code
+	unique(code,position)

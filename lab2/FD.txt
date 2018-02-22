@@ -19,25 +19,31 @@ Decomposition on departmentName -> 1departmentAbbreviation:
 {DepartmentName}+ = {departmentName,1departmentAbbreviation}
 	Department( _departmentName, departmentAbbreviation)
 		unique(departmentAbbreviation)
+	Keys of Department is ( code )
+
 
 Decomposition on programName -> programAbbreviation:
 {programName}+= {programName, programAbbreviation}
 	Program( _programName, programAbbreviation )
+	Keys of Program is ( programName, programAbbreviation )
 
-Decomposition on ssn -> login studentName:
+	Decomposition on ssn -> login studentName:
 {ssn}+= {ssn, login, studentName, branchName, programName, departmentName}
 	Student( _ssn, studentName, login, branchName, programName,departmentName )
 		programName -> Program.programName
 		departmentName -> Department.departmentName
 		unique(login)
-
+	Keys of Student is (ssn, login)
+	
 Decomposition on code -> courseName credits
 {code}+= {code, courseName, credits, classificationName, seats}
 	Course( _code, courseName, credits, classificationName, seats )
-
+	Keys of Course is (code)
+	
 Decomposition on ssn code -> grade:
 {ssn, code}+={ssn, code, grade, position}
-	Waitinglist(_ssn, _code, grade, position )
+	StudentInCourse(_ssn, _code, grade, position )
 		ssn -> Student.ssn
 		code -> Course.code
 		unique(code,position)
+	Keys of StudentInCourse is (ssn)
