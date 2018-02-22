@@ -1,0 +1,7 @@
+The reason why FD schema has way less table number than E-R schema
+is that BCNF is hard to represent self-relationship, subclass, 
+single-attribute entities and the difference between 
+many-to-one and many-to-"exactly one", so it's not a really good 
+decomposition technique. In our point of view, we think if we aim 
+to create correct tables, then using E-R schema would be more accurate.
+However, only with normal form, we can add appropriate constraints.
