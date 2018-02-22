@@ -1,8 +1,10 @@
 departmentName departmentAbbreviation programName programAbbreviation branchName ssn login studentName courseName code credits classificationName grade position seats
+
 departmentName -> departmentAbbreviation
 departmentAbbreviation -> departmentName
 programName -> programAbbreviation
 ssn -> login studentName
+login -> ssn studentName
 ssn -> branchName
 ssn -> programName
 ssn -> departmentName
@@ -11,3 +13,31 @@ code -> classificationName
 code -> seats
 ssn code -> grade
 ssn code -> position
+code position -> ssn
+
+Decomposition on departmentName -> 1departmentAbbreviation:
+{DepartmentName}+ = {departmentName,1departmentAbbreviation}
+	Department( _departmentName, departmentAbbreviation)
+		unique(departmentAbbreviation)
+
+Decomposition on programName -> programAbbreviation:
+{programName}+= {programName, programAbbreviation}
+	Program( _programName, programAbbreviation )
+
+Decomposition on ssn -> login studentName:
+{ssn}+= {ssn, login, studentName, branchName, programName, departmentName}
+	Student( _ssn, studentName, login, branchName, programName,departmentName )
+		programName -> Program.programName
+		departmentName -> Department.departmentName
+		unique(login)
+
+Decomposition on code -> courseName credits
+{code}+= {code, courseName, credits, classificationName, seats}
+	Course( _code, courseName, credits, classificationName, seats )
+
+Decomposition on ssn code -> grade:
+{ssn, code}+={ssn, code, grade, position}
+	Waitinglist(_ssn, _code, grade, position )
+		ssn -> Student.ssn
+		code -> Course.code
+		unique(code,position)

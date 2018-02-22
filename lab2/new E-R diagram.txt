@@ -1,0 +1,43 @@
+
+Program( _name, abbreviation)
+Department(　_name, abbreviation)
+Hosts( _department , _program)
+	department -> Department.name
+	program -> Program.name
+Student( _ssn, name, login, program, branch)
+	program -> Program.name
+	branch -> Branch.name
+Branch( _name, _program)
+	program -> Program.name
+BelongsTo( _student, branch, program)
+	student -> Student.ssn
+	(branch, program) -> Branch.(name, program)
+Course( _code, name, credits, department)
+	department -> Department.name
+LimitedCourse( _code, seats )
+	code -> Course.code
+Prerequisite( _course, _prerequisiteCourse )
+	course -> Course.code
+	prerequisiteCourse  -> Course.code
+Classification( _name )
+Classified( _course, _classification )
+	course -> Course.code
+	classification -> Classification.name
+MandatoryProgram( _course, _program)
+	course -> Course.code
+	program -> Program.name
+MandatoryBrance( _course, _branch, _program)
+	course -> Course.code
+	(branch, program) -> Branch.(name, program)
+RecommendedBranch ( _course, _branch, _program)
+	course -> Course.code
+	(branch, program) -> Branch.(name, program)
+Registered( _student, _course)
+	student -> Student.ssn
+	course -> Course.code
+Taken( _student, _course, grade)
+	student -> Student.ssn
+	course -> Course.code
+WaitingList( _student, _course, position)
+	student -> Student.ssn
+	course -> Course.code

@@ -11,7 +11,7 @@ RELATIONSHIP Prerequisite Course -- Course
 ENTITY Classification : _name
 RELATIONSHIP Classified Course -- Classification
 RELATIONSHIP MandatoryProgram Course -- Program
-RELATIONSHIP MandatoryProgram Course -- Branch
+RELATIONSHIP MandatoryBranch Course -- Branch
 RELATIONSHIP RecommendedBranch Course -- Branch
 RELATIONSHIP Registered Student -- Course
 RELATIONSHIP Taken Student -- Course : grade
