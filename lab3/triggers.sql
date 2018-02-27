@@ -28,11 +28,11 @@ CREATE OR REPLACE FUNCTION CourseRegistration() RETURNS TRIGGER AS $CourseRegist
 
 		--Is course the limited ?
 		SELECT COUNT(*) INTO cpt FROM LimitedCourse
-			WHERE course = NEW.course;
+			WHERE code = NEW.course;
 		IF cpt <> 0 THEN
 			--Course limited
 			SELECT seats INTO maxSeats FROM LimitedCourse
-				WHERE course = NEW.course;
+				WHERE code = NEW.course;
 			SELECT COUNT(*) INTO cpt FROM Registrations
 				WHERE status = 'registered' AND course = NEW.course;
 			IF cpt < maxSeats THEN
@@ -70,11 +70,11 @@ CREATE OR REPLACE FUNCTION CourseUnregistration() RETURNS TRIGGER AS $CourseUnre
 		END IF;
 
 		SELECT COUNT(*) INTO cpt FROM LimitedCourse
-			WHERE course = OLD.course;
+			WHERE code = OLD.course;
 		IF cpt <> 0 THEN
 			--Course limited
 			SELECT seats INTO maxSeats FROM LimitedCourse
-				WHERE course = OLD.course;
+				WHERE code = OLD.course;
 			SELECT COUNT(*) INTO cpt FROM Registrations
 				WHERE status = 'registered' AND course = OLD.course;
 			IF cpt < maxSeats THEN
