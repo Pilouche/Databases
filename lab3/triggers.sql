@@ -54,7 +54,7 @@ $CourseRegistration$ LANGUAGE PLPGSQL;
 
 DROP TRIGGER IF EXISTS CourseRegistration ON Registrations CASCADE;
 CREATE TRIGGER CourseRegistration INSTEAD OF INSERT ON Registrations
-	FOR EACH ROW EXECUTE PROCEDURE CourseRegistration();
+	FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE PROCEDURE CourseRegistration();
 
 CREATE OR REPLACE FUNCTION CourseUnregistration() RETURNS TRIGGER AS $CourseUnregistration$
 	DECLARE
@@ -100,4 +100,4 @@ $CourseUnregistration$ LANGUAGE PLPGSQL;
 
 DROP TRIGGER IF EXISTS CourseUnregistration ON Registrations CASCADE;
 CREATE TRIGGER CourseUnregistration INSTEAD OF DELETE ON Registrations 
-	FOR EACH ROW EXECUTE PROCEDURE CourseUnregistration();
+	FOR EACH ROW WHEN (pg_trigger_depth() = 0) EXECUTE PROCEDURE CourseUnregistration();
