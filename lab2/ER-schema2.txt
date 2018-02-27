@@ -15,5 +15,5 @@ RELATIONSHIP MandatoryBranch Course -- Branch
 RELATIONSHIP RecommendedBranch Course -- Branch
 RELATIONSHIP Registered Student -- Course
 RELATIONSHIP Taken Student -- Course : grade
-RELATIONSHIP WaitingList Student -- Course : position
+RELATIONSHIP WaitingList Student -- LimitedCourse : position
 ISA LimitedCourse Course : seats

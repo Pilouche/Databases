@@ -1,13 +1,12 @@
-Course( _code, courseName, credits, classificationName, seats )
+Course( _code, courseName, credits, seats )
 
 Program( _programName, programAbbreviation )
 
 Department( _departmentName, departmentAbbreviation)
 	unique(departmentAbbreviation)
 
-Student( _ssn, studentName, login, branchName, programName,departmentName )
+Student( _ssn, studentName, login, branchName, programName )
 	programName -> Program.programName
-	departmentName -> Department.departmentName
 	unique(login)
 
 StudentInCourse(_ssn, _code, grade, position )

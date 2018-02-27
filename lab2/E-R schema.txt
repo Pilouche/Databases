@@ -40,4 +40,4 @@ Taken( _student, _course, grade)
 	course -> Course.code
 WaitingList( _student, _course, position)
 	student -> Student.ssn
-	course -> Course.code
+	course -> limitedCourseCourse.code

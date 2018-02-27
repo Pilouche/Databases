@@ -7,9 +7,7 @@ ssn -> login studentName
 login -> ssn studentName
 ssn -> branchName
 ssn -> programName
-ssn -> departmentName
 code -> courseName credits
-code -> classificationName
 code -> seats
 ssn code -> grade
 ssn code -> position
@@ -28,16 +26,15 @@ Decomposition on programName -> programAbbreviation:
 	Keys of Program is ( programName, programAbbreviation )
 
 	Decomposition on ssn -> login studentName:
-{ssn}+= {ssn, login, studentName, branchName, programName, departmentName}
-	Student( _ssn, studentName, login, branchName, programName,departmentName )
+{ssn}+= {ssn, login, studentName, branchName, programName}
+	Student( _ssn, studentName, login, branchName, programName )
 		programName -> Program.programName
-		departmentName -> Department.departmentName
 		unique(login)
 	Keys of Student is (ssn, login)
 	
 Decomposition on code -> courseName credits
-{code}+= {code, courseName, credits, classificationName, seats}
-	Course( _code, courseName, credits, classificationName, seats )
+{code}+= {code, courseName, credits, seats}
+	Course( _code, courseName, credits, seats )
 	Keys of Course is (code)
 	
 Decomposition on ssn code -> grade:

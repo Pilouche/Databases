@@ -1,7 +1,18 @@
-The reason why FD schema has way less table number than E-R schema
-is that BCNF is hard to represent self-relationship, subclass, 
-single-attribute entities and the difference between 
-many-to-one and many-to-"exactly one", so it's not a really good 
-decomposition technique. In our point of view, we think if we aim 
-to create correct tables, then using E-R schema would be more accurate.
-However, only with normal form, we can add appropriate constraints.
+The reason why FD schema has way less table number than E-R schema is that BCNF is hard to represent self-relationship, subclass, 
+single-attribute entities and the difference between many-to-one and many-to-"exactly one", so it's not a really good decomposition technique. 
+In our point of view, we think if we aim to create correct tables, then using E-R schema would be more accurate.
+However, we can only add appropriate constraints with normal form technique.
+
+Redundancies:
+
+E-R Schema might have redundancies exist within it. However, with functional dependencies and normal form, we can reduce unnecessary redundancies, 
+making the whole design more simplified and clear.
+
+Null value:
+
+FD would accept Null value as long as one input will correspond to only one output.
+E-R relationship can restrict Null value by using -) but beside that there don't have many regulations. 
+
+Unique:
+
+FD can figure out where should have unique constraint but E-R relation can't.
