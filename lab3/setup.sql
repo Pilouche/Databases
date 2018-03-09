@@ -143,7 +143,7 @@ CREATE TABLE Taken(
 -- DROP Table LimitedCourse;
 CREATE TABLE LimitedCourse(
     code INT  PRIMARY KEY, 
-    seats INT NOT NULL check ( seats > 0),
+    seats INT NOT NULL check (seats > 0),
     CONSTRAINT FK_LC 
         FOREIGN KEY (code) REFERENCES Course(code)
 );
