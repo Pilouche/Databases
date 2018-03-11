@@ -9,19 +9,22 @@
 import java.sql.*; // JDBC stuff.
 import java.util.Properties;
 import java.util.Scanner;
+
+import org.postgresql.util.PSQLException;
+
 import java.io.*;  // Reading user input.
 
 public class StudentPortal
 {
     /* TODO Here you should put your database name, username and password */
     static final String DATABASE = "jdbc:postgresql://ate.ita.chalmers.se/";
-    static final String USERNAME = "";
-    static final String PASSWORD = "";
+    static final String USERNAME = "tda357_026";
+    static final String PASSWORD = "pierreshang";
 
     /* Print command usage.
      * /!\ you don't need to change this function! */
     public static void usage () {
-        System.out.println("Usage:");
+        System.out.println("Please choose a mode of operation:");
         System.out.println("    i[nformation]");
         System.out.println("    r[egister] <course>");
         System.out.println("    u[nregister] <course>");
@@ -42,12 +45,12 @@ public class StudentPortal
 
             String student = args[0]; // This is the identifier for the student.
 
-            Console console = System.console();
+        //   Console console = System.console();
 	    // In Eclipse. System.console() returns null due to a bug (https://bugs.eclipse.org/bugs/show_bug.cgi?id=122429)
 	    // In that case, use the following line instead:
-	    // BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
-            usage();
+            BufferedReader console = new BufferedReader(new InputStreamReader(System.in));
             System.out.println("Welcome!");
+            usage();
             while(true) {
 	        System.out.print("? > ");
                 String mode = console.readLine();
@@ -74,10 +77,10 @@ public class StudentPortal
         }
     }
 
-    /* Given a student identification number, ths function should print
+    /* Given a student identification number, this function should print
      * - the name of the student, the students national identification number
      *   and their issued login name (something similar to a CID)
-     * - the programme and branch (if any) that the student is following.
+     * - the program and branch (if any) that the student is following.
      * - the courses that the student has read, along with the grade.
      * - the courses that the student is registered to. (queue position if the student is waiting for the course)
      * - the number of mandatory courses that the student has yet to read.
@@ -85,7 +88,80 @@ public class StudentPortal
      */
     static void getInformation(Connection conn, String student) throws SQLException
     {
-        // TODO: Your implementation here
+    	int ssn = 0;
+    	try {
+    		ssn = Integer.parseInt(student);
+    	} catch (NumberFormatException e) {
+    		System.out.println("Error: "+e+", not a number.");
+    	} 
+    	String sql = "SELECT ssn, name, login, program FROM Student WHERE ssn = ?";
+    	PreparedStatement ps = conn.prepareStatement(sql);
+    	ps.setInt(1,ssn);
+    	ResultSet rs = ps.executeQuery();
+    	if(rs.next()) 
+    		System.out.print("Student: "+rs.getString(1)+" Name: "+rs.getString(2)+
+    				" Login: "+rs.getString(3)+"\nProgram: "+rs.getString(4));
+    	
+    	sql = "SELECT branch FROM StudentsFollowing WHERE student = ?";
+    	ps = conn.prepareStatement(sql);
+    	ps.setInt(1,ssn);
+    	rs = ps.executeQuery();
+    	if(rs.next())
+    		System.out.println(" Branch: "+rs.getString(1));
+    	
+    	sql = "SELECT course, grade FROM FinishedCourses WHERE student = ?";
+    	ps = conn.prepareStatement(sql);
+    	ps.setInt(1,ssn);
+    	rs = ps.executeQuery();
+    	System.out.println("");
+    	System.out.println("Read courses:");
+    //	if(!rs.next())
+    //		System.out.println(" No read course");
+    	while(rs.next())
+    		System.out.println(" Course: "+rs.getString(1)+" | Grade: "+rs.getString(2));
+    	
+    	sql = "SELECT course, status FROM Registrations WHERE student = ?";
+    	ps = conn.prepareStatement(sql);
+    	ps.setInt(1,ssn);
+    	rs = ps.executeQuery();
+    	System.out.println("");
+    	System.out.println("Registered courses:");
+    //	if(!rs.next())
+    //		System.out.println(" No registered course");
+    	while(rs.next()) {
+    		if(rs.getString(2).compareTo("registered") == 0)
+    			System.out.println(" Course: "+rs.getString(1)+" | Status: registered");
+    		else {
+    			sql = "SELECT position FROM CourseQueuePositions WHERE student = ? "
+    					+ "AND course = "+Integer.parseInt(rs.getString(1));
+    	    	ps = conn.prepareStatement(sql);
+    	    	ps.setInt(1,ssn);
+    	    	ResultSet rsBis = ps.executeQuery();
+    	    	rsBis = ps.executeQuery();
+    	    	rsBis.next();
+    	    	System.out.println(" Course: "+rs.getString(1)+" | Status: waiting at position "+rsBis.getString(1));
+    	    	rsBis.close();
+    		}
+    	}		
+    	sql = "SELECT mandatoryleft, status FROM PathToGraduation WHERE student = ?";
+    	ps = conn.prepareStatement(sql);
+    	ps.setInt(1,ssn);
+    	rs = ps.executeQuery();
+    	System.out.println("");
+    	System.out.println("Mandatories courses left:");
+    //	if(!rs.next())
+    //		System.out.println(" No mandatory course left");
+    	while(rs.next()) {
+    		String status = "";
+    		if(rs.getString(2).compareTo("t") == 0) 
+    			status = "OK for graduation";
+    		else
+    			status = "Not OK for graduation";
+    		System.out.println(" Number of mandatory course(s) left: "+rs.getString(1)+" | Status: "+status);
+    	}
+    	rs.close();
+    	ps.close();
+    
     }
 
     /* Register: Given a student id number and a course code, this function
@@ -94,7 +170,19 @@ public class StudentPortal
     static void registerStudent(Connection conn, String student, String course)
     throws SQLException
     {
-        // TODO: Your implementation here
+    	try {
+	    	PreparedStatement ps = conn.prepareStatement("INSERT INTO Registrations VALUES (?,?,?)");
+	    	ps.setInt(1, Integer.parseInt(student));
+	    	ps.setInt(2, Integer.parseInt(course));
+	    	ps.setString(3, null);
+	    	ps.executeUpdate();
+	    	System.out.println(ps.getWarnings().getMessage());
+	    	ps.close();
+    	} catch (PSQLException e) {
+    		System.out.println(e.getMessage());
+    	} catch (NumberFormatException e) {
+    		System.out.println("Error :"+e+", not a number.");
+    	} 
     }
 
     /* Unregister: Given a student id number and a course code, this function
@@ -103,6 +191,19 @@ public class StudentPortal
     static void unregisterStudent(Connection conn, String student, String course)
     throws SQLException
     {
-        // TODO: Your implementation here
+    	try {
+	    	PreparedStatement ps = conn.prepareStatement("DELETE FROM Registrations WHERE student = ? AND course = ?");
+	    	ps.setInt(1, Integer.parseInt(student));
+	    	ps.setInt(2, Integer.parseInt(course));
+	    	ps.executeUpdate();
+	    	System.out.println(ps.getWarnings().getMessage());
+	    	ps.close();
+    	} catch (PSQLException e) {
+    		System.out.println(e.getMessage());
+    	} catch (NumberFormatException e) {
+    		System.out.println("Error :"+e+", not a number.");
+    	} catch(NullPointerException e) {
+    		System.out.println("Student "+student+" has already been unregistered from the course"+course);
+    	}
     }
 }

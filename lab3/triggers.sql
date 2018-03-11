@@ -13,14 +13,14 @@ CREATE OR REPLACE FUNCTION CourseRegistration() RETURNS TRIGGER AS $CourseRegist
 		SELECT COUNT(*) INTO cpt FROM Registrations
 			WHERE student = NEW.student AND course = NEW.course;
 		IF cpt <> 0 THEN
-			RAISE EXCEPTION '% has already applied for the course %', NEW.student, NEW.course;
+			RAISE EXCEPTION 'Student % has already applied for the course %', NEW.student, NEW.course;
 		END IF;
 
 		--The student has already passed the course
 		SELECT COUNT(*) INTO cpt FROM PassedCourses
 			WHERE student = NEW.student AND course = NEW.course;
 		IF cpt <> 0 THEN
-			RAISE EXCEPTION '% has already passed the course %', NEW.student, NEW.course;
+			RAISE EXCEPTION 'Student % has already passed the course %', NEW.student, NEW.course;
 		END IF;
 
 		--The student isn't allowed to take the course
@@ -29,13 +29,12 @@ CREATE OR REPLACE FUNCTION CourseRegistration() RETURNS TRIGGER AS $CourseRegist
 				EXCEPT
 			SELECT course FROM PassedCourses WHERE student = NEW.student) AS cpt;
 		IF cpt <> 0 THEN
-			RAISE EXCEPTION '% has not the prerequisites for the course %', NEW.student, NEW.course;
+			RAISE EXCEPTION 'Student % has not the prerequisites for the course %', NEW.student, NEW.course;
 		END IF;
 
 		--Is course the limited ?
 		SELECT COUNT(*) INTO cpt FROM LimitedCourse
 			WHERE code = NEW.course;
-		--raise notice 'Value: %', cpt;
 		IF cpt <> 0 THEN
 			--Course limited
 			SELECT seats INTO maxSeats FROM LimitedCourse
@@ -45,17 +44,20 @@ CREATE OR REPLACE FUNCTION CourseRegistration() RETURNS TRIGGER AS $CourseRegist
 			IF cpt < maxSeats THEN
 				--Course not full
 				INSERT INTO Registered VALUES (NEW.student, NEW.course);
+				RAISE NOTICE 'Student % has been successfully registered for the limited course %', NEW.student, NEW.course;
 				RETURN NEW;
 			ELSE
 				--Course full
 				SELECT MAX(position) INTO maxPos FROM WaitingList
 					WHERE course = NEW.course;
 				INSERT INTO WaitingList VALUES (NEW.student, NEW.course, maxPos+1);
+				RAISE NOTICE 'Course % is full, student % has put ont the waiting list with position %', NEW.course, NEW.student, maxPos+1;
 				RETURN NEW;
 			END IF;
 		ELSE
 			--Course not limited
 			INSERT INTO Registered VALUES (NEW.student, NEW.course);
+			RAISE NOTICE 'Student % has been successfully registered for the course %', NEW.student, NEW.course;
 			RETURN NEW;
 		END IF;
 		RETURN NEW;
@@ -84,10 +86,12 @@ CREATE OR REPLACE FUNCTION CourseUnregistration() RETURNS TRIGGER AS $CourseUnre
 			SELECT position INTO pos FROM WaitingList WHERE student = OLD.student AND course = OLD.course;
 			DELETE FROM WaitingList WHERE student = OLD.student AND course = OLD.course;
 			UPDATE WaitingList SET position = position-1 WHERE position > pos AND course = OLD.course;
+			RAISE NOTICE 'Student % has been successfully unregistered of the waiting list for the course %', OLD.student, OLD.course;
 			--Student was waiting so no need for further updates
 			RETURN OLD;
 		ELSE
 			DELETE FROM Registered WHERE student = OLD.student AND course = OLD.course;
+			RAISE NOTICE 'Student % has been successfully unregistered of the course %', OLD.student, OLD.course;
 		END IF;
 
 		SELECT COUNT(*) INTO cpt FROM LimitedCourse
